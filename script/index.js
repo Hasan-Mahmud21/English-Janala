@@ -4,12 +4,24 @@ const loadLessons = () => {
     .then((json) => displayLesson(json.data));
 };
 
+const removeActive = () => {
+  const lessonButtons = document.querySelectorAll(".lesson-btn")
+  // console.log(lessonButtons)
+  lessonButtons.forEach(btn => btn.classList.remove("active"))
+}
+
 const loadLevelWord = (id) => {
   // console.log(id);
   const url = `https://openapi.programming-hero.com/api/level/${id}`;
   fetch(url)
     .then((res) => res.json())
-    .then((data) => displayLevelWord(data.data));
+    .then((data) => {
+       removeActive(); // remove active class
+       const clickBtn = document.getElementById(`lesson-btn-${id}`);
+       console.log(clickBtn)
+       clickBtn.classList.add("active") // add active class
+       displayLevelWord(data.data);
+    });
 };
 
 // {
@@ -42,9 +54,9 @@ const displayLevelWord = (words) => {
     const card = document.createElement("div")
     card.innerHTML = `
     <div class="rounded-xl shadow-sm text-center py-10 px-5 space-y-4">
-        <h2 class="text-2xl font-bold">${word.word}</h2>
+        <h2 class="text-2xl font-bold">${word.word ? word.word : "শব্দ পাওয়া যায় নি"}</h2>
         <p class="font-semibold">Meaning/Pronunciation</p>
-        <div class="font-bangla text-xl font-medium">${word.meaning} / ${word.pronunciation}"</div>
+        <div class="font-bangla text-xl font-medium">${word.meaning ? word.meaning : "অর্থ পাওয়া যায় নি"} / ${word.pronunciation ? word.pronunciation : "উচ্চারণ পাওয়া যায় নি"}"</div>
         <div class="flex justify-between items-center">
           <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
             <i class="fa-solid fa-circle-info"></i>
@@ -61,13 +73,13 @@ const displayLevelWord = (words) => {
 };
 
 const displayLesson = (lessons) => {
-  //   1. get the container & empty
+  // 1. get the container & empty
   const levelContainer = document.getElementById("level-container");
   levelContainer.innerHTML = "";
 
-  //   2. get into evey lessons
+  // 2. get into every lessons
   for (let lesson of lessons) {
-    //         3. create Element
+    // 3. create Element
     // console.log(lesson);
     const btnDiv = document.createElement("div");
     btnDiv.innerHTML = `
@@ -76,7 +88,7 @@ const displayLesson = (lessons) => {
                   </button>
     `;
 
-    //         4. append into container
+    // 4. append into container
 
     levelContainer.append(btnDiv);
   }
